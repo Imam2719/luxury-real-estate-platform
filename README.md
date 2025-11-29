@@ -12,11 +12,9 @@ A modern, full-stack luxury real estate platform with advanced features includin
 - [Database Schema (ERD)](#database-schema-erd)
 - [API Documentation](#api-documentation)
 - [Payment Integration](#payment-integration)
-- [Installation & Setup](#installation--setup)
 - [Project Structure](#project-structure)
 - [Features](#features)
 - [Testing](#testing)
-- [Deployment](#deployment)
 - [Contributing](#contributing)
 
 ---
