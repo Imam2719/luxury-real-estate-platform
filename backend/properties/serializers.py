@@ -3,7 +3,7 @@ from .models import Category, Property
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    """Category Serializer with children"""
+    """Category Serializer with children (Fixed - prevents infinite recursion)"""
     children = serializers.SerializerMethodField()
     
     class Meta:
@@ -12,8 +12,28 @@ class CategorySerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'slug', 'created_at']
     
     def get_children(self, obj):
+        """
+        Get child categories - Uses depth parameter to limit recursion
+        """
+        # Check if we're already at max depth to prevent infinite recursion
+        request = self.context.get('request')
+        depth = self.context.get('depth', 0)
+        
+        # Limit recursion to 3 levels deep
+        if depth >= 3:
+            return []
+        
         if obj.children.exists():
-            return CategorySerializer(obj.children.all(), many=True).data
+            # Pass increased depth to child serializer
+            serializer = CategorySerializer(
+                obj.children.all(), 
+                many=True,
+                context={
+                    **self.context,
+                    'depth': depth + 1
+                }
+            )
+            return serializer.data
         return []
 
 

@@ -33,11 +33,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """User Profile Serializer"""
+    """User Profile Serializer - FIXED to include is_admin"""
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'phone', 'address', 'is_admin', 'created_at']
-        read_only_fields = ['id', 'is_admin', 'created_at']
+        fields = ['id', 'username', 'email', 'phone', 'address', 'is_admin', 'is_staff', 'created_at']
+        read_only_fields = ['id', 'is_admin', 'is_staff', 'created_at']
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -48,4 +48,5 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         token['email'] = user.email
         token['is_admin'] = user.is_admin
+        token['is_staff'] = user.is_staff
         return token

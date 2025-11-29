@@ -36,12 +36,19 @@ class InitiatePaymentView(APIView):
             return Response({"error": "Invalid or already paid booking"}, status=400)
 
         service = PaymentService(provider)
-        result = service.initiate_payment(booking, request)
+        # ✅ FIXED: Pass correct arguments (booking_id and user)
+        result = service.initiate_payment(booking_id, request.user)
 
-        return Response({
-            "success": True,
-            "payment_url": result['payment_url']
-        })
+        if result.get('success'):
+            return Response({
+                "success": True,
+                "payment_url": result.get('payment_url') or result.get('bkash_url'),
+                "client_secret": result.get('client_secret'),
+                "transaction_id": result.get('transaction_id'),
+                "payment_id": result.get('payment_id')
+            })
+        else:
+            return Response(result, status=400)
 
 
 # 2. Stripe Webhook - Auto confirm payment
